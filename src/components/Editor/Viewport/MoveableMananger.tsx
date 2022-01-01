@@ -35,8 +35,8 @@ const MoveableMananger: React.FC<{
         checkInput={selectedMenu === "Text"}
         keepRatio={selectedTargets.length > 1 ? true : isShift}
         snappable={true}
-        snapDirections={{ top: true, left: true, right: true, center: true, middle: true }}
-        elementSnapDirections={{ top: true, left: true, right: true, center: true, middle: true }}
+        snapDirections={{ top: true, left: true, right: true, center: true, middle: true, bottom: true }}
+        elementSnapDirections={{ top: true, left: true, right: true, center: true, middle: true, bottom: true }}
         isDisplayInnerSnapDigit={true}
         elementGuidelines={elementGuidelines as any}
         onDragStart={moveableData().onDragStart}
