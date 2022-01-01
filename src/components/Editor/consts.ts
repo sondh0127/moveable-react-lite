@@ -13,9 +13,9 @@ export const PREFIX = "scena-";
 export const DATA_SCENA_ELEMENT_ID = "data-scena-element-id";
 export const DATA_SCENA_ELEMENT = "data-scena-element";
 export const TYPE_SCENA_LAYERS = "application/x-scena-layers";
+
 export const EDITOR_CSS = `
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600&display=swap");
-
 {
     position: relative;
     width: 100%;

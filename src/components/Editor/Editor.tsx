@@ -7,7 +7,6 @@ import { getContentElement, prefix, checkImageLoaded, setMoveMatrix, getOffsetOr
 import Memory from "./utils/Memory";
 import MoveableManager from "./Viewport/MoveableMananger";
 import MoveableData from "./utils/MoveableData";
-import { ScenaEditorState, } from "./types";
 import { DATA_SCENA_ELEMENT_ID, EDITOR_CSS } from "./consts";
 import { invert, matrix3d, } from "@scena/matrix";
 import { getElementInfo } from "react-moveable";
@@ -110,16 +109,16 @@ const Editor: React.FC = (props) => {
         <EditorElement className={prefix("editor")} ref={editorElement}>
             <InfiniteViewer ref={infiniteViewer}
                 className={prefix("viewer")}
-                usePinch={true}
                 useForceWheel={true}
+                usePinch={true}
                 pinchThreshold={50}
                 maxPinchWheel={3}
                 zoom={zoom}
             >
                 <Viewport ref={viewport}
                     style={{
-                        width: `${400}px`,
-                        height: `${600}px`,
+                        width: `${1000}px`,
+                        height: `${1000}px`,
                     }}>
                     <MoveableManager
                         moveableData={() => moveableData.current!}

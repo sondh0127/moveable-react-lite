@@ -1,6 +1,6 @@
 import * as React from "react";
 import { IObject, isString, isArray } from "@daybrush/utils";
-import { prefix, getId, isScenaFunction, isScenaElement, updateElements, makeScenaFunctionComponent } from "../utils/utils";
+import { prefix, getId, isScenaFunction, isScenaElement, makeScenaFunctionComponent } from "../utils/utils";
 import { DATA_SCENA_ELEMENT_ID } from "../consts";
 import { ScenaJSXElement, ElementInfo, AddedInfo, ScenaProps, } from "../types";
 
@@ -92,17 +92,7 @@ const Viewport: React.FC<{
         });
     }
 
-    function makeId(ids: IObject<any> = state.ids) {
 
-        while (true) {
-            const id = `scena${Math.floor(Math.random() * 100000000)}`;
-
-            if (ids[id]) {
-                continue;
-            }
-            return id;
-        }
-    }
     function setInfo(id: string, info: ElementInfo) {
         const ids = state.ids;
 
@@ -123,6 +113,17 @@ const Viewport: React.FC<{
 
 
     function registerChildren(jsxs: ElementInfo[], parentScopeId?: string) {
+
+        function makeId(ids: IObject<any> = state.ids) {
+            while (true) {
+                const id = `scena${Math.floor(Math.random() * 100000000)}`;
+                if (ids[id]) {
+                    continue;
+                }
+                return id;
+            }
+        }
+
         return jsxs.map(info => {
             const id = info.id || makeId();
             const jsx = info.jsx;
