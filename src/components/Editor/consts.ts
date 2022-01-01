@@ -1,6 +1,3 @@
-import { createContext } from "react";
-import Editor from "./Editor";
-
 export const EDITOR_PROPERTIES = [
     "memory",
     "moveableData",
@@ -303,5 +300,3 @@ export const EDITOR_CSS = `
     margin-top: 2px;
 }
 `;
-
-export const EditorContext = createContext<Editor | null>(null);
