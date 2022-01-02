@@ -1,5 +1,5 @@
 import { atom } from 'jotai'
-import { ElementInfo } from '.'
+import { ElementInfo, ScenaJSXElement } from '.'
 
 interface Ids {
   viewport: ElementInfo
@@ -14,3 +14,9 @@ export const idsAtom = atom<Ids>({
     children: [],
   },
 })
+
+interface Jsxs {
+  [key: string]: ScenaJSXElement
+}
+
+export const jsxsAtom = atom<Jsxs>({})

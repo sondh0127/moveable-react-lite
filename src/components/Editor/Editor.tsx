@@ -2,7 +2,7 @@ import * as React from "react";
 import InfiniteViewer from "react-infinite-viewer";
 import Selecto from "react-selecto";
 import Viewport from "./Viewport/Viewport";
-import { getContentElement, prefix, checkImageLoaded, setMoveMatrix, getOffsetOriginMatrix, updateElements, getId } from "./utils/utils";
+import { getContentElement, prefix, checkImageLoaded, setMoveMatrix, getOffsetOriginMatrix, updateElements, getId, isScenaElement } from "./utils/utils";
 import Memory from "./utils/Memory";
 import MoveableManager from "./Viewport/MoveableMananger";
 import MoveableData from "./utils/MoveableData";
@@ -11,7 +11,9 @@ import { invert, matrix3d, } from "@scena/matrix";
 import { getElementInfo } from "react-moveable";
 import './Editor.css';
 import { useAtom } from "jotai";
-import { idsAtom } from "./store";
+import { idsAtom, jsxsAtom } from "./store";
+import { AddedInfo, ElementInfo } from ".";
+import { IObject } from "@daybrush/utils";
 
 const Editor: React.FC = () => {
     const [state, setState] = React.useState({
@@ -26,6 +28,7 @@ const Editor: React.FC = () => {
     const selecto = React.useRef<Selecto>();
     const viewport = React.useRef<Viewport>();
     const [ids, setIds] = useAtom(idsAtom)
+    const [jsxs, setJsxs] = useAtom(jsxsAtom)
 
     const {
         selectedMenu,
@@ -48,8 +51,127 @@ const Editor: React.FC = () => {
         }
     }, [])
 
+    function appendJSXs(): Promise<AddedInfo> {
+        const jsxs = [
+            {
+                jsx: <div className="moveable" contentEditable="true" suppressContentEditableWarning={true}>Moveable</div>,
+                name: "(Logo)",
+                frame: {
+                    position: "absolute",
+                    left: "50%",
+                    top: "30%",
+                    width: "250px",
+                    height: "100px",
+                    "font-size": "40px",
+                    "transform": "translate(-125px, -100px)",
+                    display: "flex",
+                    "justify-content": "center",
+                    "flex-direction": "column",
+                    "text-align": "center",
+                    "font-weight": 100,
+                },
+            },
+            {
+                jsx: <div className="moveable" contentEditable="true" suppressContentEditableWarning={true}>Moveable 2</div>,
+                name: "(Badges)",
+                frame: {
+                    position: "absolute",
+                    left: "50%",
+                    top: "50%",
+                    width: "250px",
+                    height: "100px",
+                    "font-size": "40px",
+                    "transform": "translate(-125px, -100px)",
+                    display: "flex",
+                    "justify-content": "center",
+                    "flex-direction": "column",
+                    "text-align": "center",
+                    "font-weight": 100,
+                },
+            },
+            {
+                jsx: <div className="moveable" contentEditable="true" suppressContentEditableWarning={true}>Moveable is Draggable! Resizable! Scalable! Rotatable! Warpable! Pinchable</div>,
+                name: "(Description)",
+                frame: {
+                    position: "absolute",
+                    left: "0%",
+                    top: "65%",
+                    width: "100%",
+                    "font-size": "14px",
+                    "text-align": "center",
+                    "font-weight": "normal",
+                },
+            },
+        ]
+        const jsxInfos = registerChildren(jsxs);
+
+        jsxInfos.forEach((info, i) => {
+            const scopeInfo = ids[info.scopeId!];
+            const children = scopeInfo.children!;
+            info.index = children.length;
+            children.push(info);
+        });
+
+        return new Promise(resolve => {
+            resolve({
+                added: jsxInfos,
+            });
+        });
+    }
+
+    function registerChildren(_jsxs: ElementInfo[]) {
+        function makeId(_ids?: IObject<any>) {
+            _ids = _ids || ids
+            while (true) {
+                const id = `scena${Math.floor(Math.random() * 100000000)}`;
+                if (_ids[id]) {
+                    continue;
+                }
+                return id;
+            }
+        }
+
+        return _jsxs.map(info => {
+            const id = info.id || makeId();
+            const jsx = info.jsx;
+            const children = info.children || [];
+            const scopeId = info.scopeId || "viewport";
+            let componentId = "";
+            let jsxId = "";
+
+
+            if (isScenaElement(jsx)) {
+                jsxId = makeId(jsxs);
+                setJsxs({
+                    ...jsxs,
+                    [jsxId]: jsx,
+                })
+            }
+            const elementInfo: ElementInfo = {
+                ...info,
+                jsx,
+                children: registerChildren(children),
+                scopeId,
+                componentId,
+                jsxId,
+                frame: info.frame || {},
+                el: null,
+                id,
+            };
+
+            function setInfo(id: string, info: ElementInfo) {
+                const _ids = ids;
+                _ids[id] = info;
+                setIds(_ids);
+            }
+
+            setInfo(id, elementInfo);
+            return elementInfo;
+        });
+    }
+
     async function initTargets() {
-        const { added } = await viewport.current!.appendJSXs()
+        const { added } = await appendJSXs()
         const data = moveableData.current!;
         const container = viewport.current!.viewportRef.current!;
         const infos = updateElements(added)
@@ -102,6 +224,8 @@ const Editor: React.FC = () => {
         moveableData.current!.setSelectedTargets(targets);
         return targets;
     }
+
+
 
     return (
         <div className={prefix("editor")} >
