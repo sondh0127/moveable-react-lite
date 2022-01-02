@@ -2,7 +2,7 @@ import * as React from "react";
 import InfiniteViewer from "react-infinite-viewer";
 import Selecto from "react-selecto";
 import Viewport from "./Viewport/Viewport";
-import { getContentElement, prefix, checkImageLoaded, setMoveMatrix, getOffsetOriginMatrix, updateElements } from "./utils/utils";
+import { getContentElement, prefix, checkImageLoaded, setMoveMatrix, getOffsetOriginMatrix, updateElements, getId } from "./utils/utils";
 import Memory from "./utils/Memory";
 import MoveableManager from "./Viewport/MoveableMananger";
 import MoveableData from "./utils/MoveableData";
@@ -10,6 +10,8 @@ import { DATA_SCENA_ELEMENT_ID } from "./consts";
 import { invert, matrix3d, } from "@scena/matrix";
 import { getElementInfo } from "react-moveable";
 import './Editor.css';
+import { useAtom } from "jotai";
+import { idsAtom } from "./store";
 
 const Editor: React.FC = () => {
     const [state, setState] = React.useState({
@@ -23,6 +25,7 @@ const Editor: React.FC = () => {
     const infiniteViewer = React.useRef<InfiniteViewer>();
     const selecto = React.useRef<Selecto>();
     const viewport = React.useRef<Viewport>();
+    const [ids, setIds] = useAtom(idsAtom)
 
     const {
         selectedMenu,

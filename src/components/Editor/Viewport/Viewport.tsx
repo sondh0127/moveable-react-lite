@@ -1,6 +1,6 @@
 import * as React from "react";
 import { IObject, isString, isArray } from "@daybrush/utils";
-import { prefix, getId, isScenaFunction, isScenaElement, makeScenaFunctionComponent } from "../utils/utils";
+import { prefix, isScenaFunction, isScenaElement, makeScenaFunctionComponent } from "../utils/utils";
 import { DATA_SCENA_ELEMENT_ID } from "../consts";
 import { ScenaJSXElement, ElementInfo, AddedInfo, ScenaProps, } from "../types";
 import { useAtom } from "jotai";
@@ -91,15 +91,6 @@ const Viewport: React.FC<{
         setIds(_ids);
     }
 
-    function getInfo(id: string) {
-        return ids[id];
-    }
-
-    function getInfoByElement(el: HTMLElement | SVGElement) {
-        return ids[getId(el)];
-    }
-
-
     function registerChildren(jsxs: ElementInfo[], parentScopeId?: string) {
         function makeId(_ids?: IObject<any>) {
             _ids = _ids || ids
@@ -147,18 +138,6 @@ const Viewport: React.FC<{
             return elementInfo;
         });
     }
-
-    function getIndexes(target: HTMLElement | SVGElement | string): number[] {
-        const info = (isString(target) ? getInfo(target) : getInfoByElement(target))!;
-
-        if (!info.scopeId) {
-            return [];
-        }
-        const parentInfo = getInfo(info.scopeId)!;
-
-        return [...getIndexes(info.scopeId), parentInfo.children!.indexOf(info)];
-    }
-
 
     function appendJSXs(): Promise<AddedInfo> {
         const jsxs = [
@@ -208,7 +187,7 @@ const Viewport: React.FC<{
         const jsxInfos = registerChildren(jsxs, "");
 
         jsxInfos.forEach((info, i) => {
-            const scopeInfo = getInfo("" || info.scopeId!);
+            const scopeInfo = ids[info.scopeId!];
             const children = scopeInfo.children!;
             info.index = children.length;
             children.push(info);
@@ -223,7 +202,6 @@ const Viewport: React.FC<{
 
     React.useImperativeHandle(ref, () => ({
         appendJSXs,
-        getIndexes,
         viewportRef
     }));
 
