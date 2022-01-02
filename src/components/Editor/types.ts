@@ -1,5 +1,4 @@
 import { IObject } from "@daybrush/utils";
-import Editor from "./Editor";
 import * as React from "react";
 import { EDITOR_PROPERTIES } from "./consts";
 

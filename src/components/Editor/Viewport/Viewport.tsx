@@ -3,6 +3,8 @@ import { IObject, isString, isArray } from "@daybrush/utils";
 import { prefix, getId, isScenaFunction, isScenaElement, makeScenaFunctionComponent } from "../utils/utils";
 import { DATA_SCENA_ELEMENT_ID } from "../consts";
 import { ScenaJSXElement, ElementInfo, AddedInfo, ScenaProps, } from "../types";
+import { useAtom } from "jotai";
+import { idsAtom } from "../store";
 
 const Badge = makeScenaFunctionComponent("Badge", function Badge(props: ScenaProps) {
     return <p className="badges" data-scena-element-id={props.scenaElementId}>
@@ -26,35 +28,25 @@ const Badge = makeScenaFunctionComponent("Badge", function Badge(props: ScenaPro
 const Viewport: React.FC<{
     style: IObject<any>,
 }> = (props, ref) => {
+    const [ids, setIds] = useAtom(idsAtom)
+
     const [state, setState] = React.useState<{
         jsxs: IObject<ScenaJSXElement>,
-        ids: IObject<ElementInfo>
     }>({
         jsxs: {},
-        ids: {
-            viewport: {
-                jsx: <div></div>,
-                name: "Viewport",
-                id: "viewport",
-                children: [],
-            },
-        }
     });
+
 
     const viewportRef = React.useRef<HTMLDivElement>();
 
     React.useEffect(() => {
-        setState({
-            ...state,
-            ids: {
-                ...state.ids,
-                viewport: {
-                    ...state.ids.viewport,
-                    el: viewportRef.current,
-                }
+        setIds({
+            ...ids,
+            viewport: {
+                ...ids.viewport,
+                el: viewportRef.current,
             }
         })
-
     }, [])
 
     function renderChildren(children: ElementInfo[]): ScenaJSXElement[] {
@@ -94,30 +86,26 @@ const Viewport: React.FC<{
 
 
     function setInfo(id: string, info: ElementInfo) {
-        const ids = state.ids;
-
-        ids[id] = info;
-
-        setState({
-            ...state,
-            ids,
-        });
+        const _ids = ids;
+        _ids[id] = info;
+        setIds(_ids);
     }
+
     function getInfo(id: string) {
-        return state.ids[id];
+        return ids[id];
     }
 
     function getInfoByElement(el: HTMLElement | SVGElement) {
-        return state.ids[getId(el)];
+        return ids[getId(el)];
     }
 
 
     function registerChildren(jsxs: ElementInfo[], parentScopeId?: string) {
-
-        function makeId(ids: IObject<any> = state.ids) {
+        function makeId(_ids?: IObject<any>) {
+            _ids = _ids || ids
             while (true) {
                 const id = `scena${Math.floor(Math.random() * 100000000)}`;
-                if (ids[id]) {
+                if (_ids[id]) {
                     continue;
                 }
                 return id;
@@ -243,7 +231,7 @@ const Viewport: React.FC<{
     return <div className={prefix("viewport-container")} style={style}>
         {props.children}
         <div className={prefix("viewport")} {...{ [DATA_SCENA_ELEMENT_ID]: "viewport" }} ref={viewportRef}>
-            {renderChildren(state.ids.viewport.children!)}
+            {renderChildren(ids.viewport.children!)}
         </div>
     </div>
 }

@@ -7,9 +7,9 @@ specifiers:
   '@types/react-dom': ^17.0.10
   '@vitejs/plugin-react': ^1.0.7
   framework-utils: ^1.1.0
+  jotai: ^1.5.0
   moveable-helper: ^0.4.0
   react: ^17.0.2
-  react-css-styled: ^1.0.3
   react-dom: ^17.0.2
   react-infinite-viewer: ^0.13.0
   react-moveable: ^0.30.3
@@ -22,9 +22,9 @@ dependencies:
   '@daybrush/utils': 1.6.0
   '@scena/matrix': 1.1.1
   framework-utils: 1.1.0
+  jotai: 1.5.0_react@17.0.2
   moveable-helper: 0.4.0
   react: 17.0.2
-  react-css-styled: 1.0.3
   react-dom: 17.0.2_react@17.0.2
   react-infinite-viewer: 0.13.0
   react-moveable: 0.30.3
@@ -701,6 +701,43 @@ packages:
     dependencies:
       has: 1.0.3
     dev: true
+
+  /jotai/1.5.0_react@17.0.2:
+    resolution: {integrity: sha512-fR8kLAAgkh/3tFD/eCNhhF2eWYinqeU6TAIDWlLccUFihhhcmbQs1FHkTTAFZXoq9UM9fsLqMqk54jffMKVC5Q==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      '@babel/core': '*'
+      '@babel/template': '*'
+      '@urql/core': '*'
+      immer: '*'
+      optics-ts: '*'
+      react: '>=16.8'
+      react-query: '*'
+      valtio: '*'
+      wonka: '*'
+      xstate: '*'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      '@babel/template':
+        optional: true
+      '@urql/core':
+        optional: true
+      immer:
+        optional: true
+      optics-ts:
+        optional: true
+      react-query:
+        optional: true
+      valtio:
+        optional: true
+      wonka:
+        optional: true
+      xstate:
+        optional: true
+    dependencies:
+      react: 17.0.2
+    dev: false
 
   /js-tokens/4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}

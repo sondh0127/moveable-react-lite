@@ -1,21 +1,17 @@
 import * as React from "react";
 import InfiniteViewer from "react-infinite-viewer";
 import Selecto from "react-selecto";
-import styled, { StyledElement } from "react-css-styled";
 import Viewport from "./Viewport/Viewport";
 import { getContentElement, prefix, checkImageLoaded, setMoveMatrix, getOffsetOriginMatrix, updateElements } from "./utils/utils";
 import Memory from "./utils/Memory";
 import MoveableManager from "./Viewport/MoveableMananger";
 import MoveableData from "./utils/MoveableData";
-import { DATA_SCENA_ELEMENT_ID, EDITOR_CSS } from "./consts";
+import { DATA_SCENA_ELEMENT_ID } from "./consts";
 import { invert, matrix3d, } from "@scena/matrix";
 import { getElementInfo } from "react-moveable";
+import './Editor.css';
 
-
-const EditorElement = styled("div", EDITOR_CSS);
-
-
-const Editor: React.FC = (props) => {
+const Editor: React.FC = () => {
     const [state, setState] = React.useState({
         selectedTargets: [],
         zoom: 1,
@@ -27,7 +23,6 @@ const Editor: React.FC = (props) => {
     const infiniteViewer = React.useRef<InfiniteViewer>();
     const selecto = React.useRef<Selecto>();
     const viewport = React.useRef<Viewport>();
-    const editorElement = React.useRef<StyledElement<HTMLDivElement>>();
 
     const {
         selectedMenu,
@@ -106,7 +101,7 @@ const Editor: React.FC = (props) => {
     }
 
     return (
-        <EditorElement className={prefix("editor")} ref={editorElement}>
+        <div className={prefix("editor")} >
             <InfiniteViewer ref={infiniteViewer}
                 className={prefix("viewer")}
                 useForceWheel={true}
@@ -117,8 +112,8 @@ const Editor: React.FC = (props) => {
             >
                 <Viewport ref={viewport}
                     style={{
-                        width: `${1000}px`,
-                        height: `${1000}px`,
+                        width: `${500}px`,
+                        height: `${600}px`,
                     }}>
                     <MoveableManager
                         moveableData={() => moveableData.current!}
@@ -191,7 +186,7 @@ const Editor: React.FC = (props) => {
                     });
                 }}
             ></Selecto>
-        </EditorElement>
+        </div>
     );
 }
 
