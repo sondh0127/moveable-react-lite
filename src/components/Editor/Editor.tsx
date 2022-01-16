@@ -198,13 +198,10 @@ const Editor: React.FC = () => {
             });
         });
 
-        await new Promise<void>(resolve => {
-            setState({
-                ...state,
-                selectedTargets: targets as any,
-            });
-            resolve()
-        })
+        setState({
+            ...state,
+            selectedTargets: targets as any,
+        });
         selecto.current!.setSelectedTargets(targets);
         moveableData!.setSelectedTargets(targets);
         return targets;
@@ -284,7 +281,7 @@ const Editor: React.FC = () => {
                     if (
                         (inputEvent.type === "touchstart" && e.isTrusted)
                         || moveableManager.current!.moveableRef.current.isMoveableElement(target)
-                        // || state.selectedTargets.some(t => t === target || t.contains(target))
+                        || state.selectedTargets.some(t => t === target || t.contains(target))
                     ) {
                         e.stop();
                     }
