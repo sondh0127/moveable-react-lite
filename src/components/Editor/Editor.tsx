@@ -248,6 +248,7 @@ const Editor: React.FC = () => {
                         selectedTargets={selectedTargets}
                         selectedMenu={selectedMenu}
                         zoom={zoom}
+                        setSelectedTargets={setSelectedTargets}
                     ></MoveableManager>
                 </Viewport>
             </InfiniteViewer>

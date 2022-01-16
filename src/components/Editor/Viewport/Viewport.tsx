@@ -1,10 +1,10 @@
 import * as React from "react";
 import { IObject, isString, isArray } from "@daybrush/utils";
-import { prefix, isScenaFunction, isScenaElement } from "../utils/utils";
+import { prefix, isScenaFunction } from "../utils/utils";
 import { DATA_SCENA_ELEMENT_ID } from "../consts";
 import { ScenaJSXElement, ElementInfo } from "../types";
 import { useAtom } from "jotai";
-import { idsAtom, jsxsAtom } from "../store";
+import { idsAtom } from "../store";
 
 const Viewport: React.FC<{
     style: IObject<any>,
