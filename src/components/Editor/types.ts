@@ -1,6 +1,5 @@
 import { IObject } from "@daybrush/utils";
 import * as React from "react";
-import { EDITOR_PROPERTIES } from "./consts";
 
 export interface ScenaEditorState {
     selectedTargets: Array<SVGElement | HTMLElement>;
@@ -14,11 +13,6 @@ export interface TagAppendInfo {
     name: string;
     frame: IObject<any>;
 }
-
-
-export type EditorInterface = {
-    [key in (typeof EDITOR_PROPERTIES)[number]]: Editor[key];
-};
 
 export interface Clipboard {
     write(items: ClipboardItem[]): Promise<void>;

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { IObject, isString, isArray } from "@daybrush/utils";
-import { prefix, isScenaFunction } from "../utils/utils";
+import { prefix } from "../utils/utils";
 import { DATA_SCENA_ELEMENT_ID } from "../consts";
 import { ScenaJSXElement, ElementInfo } from "../types";
 import { useAtom } from "jotai";
@@ -35,13 +35,6 @@ const Viewport: React.FC<{
             if (isString(jsx)) {
                 props[DATA_SCENA_ELEMENT_ID] = id;
                 return React.createElement(jsx, props, ...renderedChildren) as ScenaJSXElement;
-            } else if (isScenaFunction(jsx)) {
-                props.scenaElementId = id;
-                props.scenaAttrs = info.attrs || {};
-                props.scenaText = info.innerText;
-                props.scenaHTML = info.innerHTML;
-
-                return React.createElement(jsx, props) as ScenaJSXElement;
             } else if (isString(jsx.type)) {
                 props[DATA_SCENA_ELEMENT_ID] = id;
             } else {
