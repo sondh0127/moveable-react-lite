@@ -3,7 +3,6 @@ import InfiniteViewer from "react-infinite-viewer";
 import Selecto from "react-selecto";
 import Viewport from "./Viewport/Viewport";
 import { getContentElement, prefix, checkImageLoaded, updateElements, isScenaElement } from "./utils/utils";
-import Memory from "./utils/Memory";
 import MoveableManager from "./Viewport/MoveableMananger";
 import MoveableData from "./utils/MoveableData";
 import { DATA_SCENA_ELEMENT_ID } from "./consts";
@@ -14,8 +13,7 @@ import { idsAtom, jsxsAtom } from "./store";
 import { ElementInfo } from ".";
 import { IObject } from "@daybrush/utils";
 
-const memory = new Memory();
-export const moveableData = new MoveableData(memory)
+export const moveableData = new MoveableData()
 
 const jsxElements = [
     {
@@ -89,16 +87,12 @@ const Editor: React.FC = () => {
     } = state;
 
     React.useEffect(() => {
-        memory.set("background-color", "#4af");
-        memory.set("color", "#333");
-
         requestAnimationFrame(() => {
             infiniteViewer.current!.scrollCenter();
         });
 
         initTargets()
         return () => {
-            memory.clear();
             moveableData!.clear();
         }
     }, [])

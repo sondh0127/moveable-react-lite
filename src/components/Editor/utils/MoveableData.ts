@@ -1,8 +1,7 @@
 import MoveableHelper from "moveable-helper";
-import Memory from "./Memory";
 export default class MoveableData extends MoveableHelper {
     public selectedTargets: Array<HTMLElement | SVGElement> = [];
-    constructor(private memory: Memory) {
+    constructor() {
         super({
             createAuto: true,
             useBeforeRender: true,
