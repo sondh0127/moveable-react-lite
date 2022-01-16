@@ -2,9 +2,6 @@ import { prefixNames } from "framework-utils";
 import { PREFIX, DATA_SCENA_ELEMENT_ID } from "../consts";
 import {ScenaComponent, ScenaJSXElement, ElementInfo } from "../types";
 import { IObject, isFunction, isObject } from "@daybrush/utils";
-import { Frame } from "scenejs";
-import { getElementInfo } from "react-moveable";
-import { fromTranslation, matrix3d } from "@scena/matrix";
 
 
 export function prefix(...classNames: string[]) {

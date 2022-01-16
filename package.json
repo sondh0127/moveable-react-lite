@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "@daybrush/utils": "^1.6.0",
-    "@scena/matrix": "^1.1.1",
     "framework-utils": "^1.1.0",
     "jotai": "^1.5.0",
     "moveable-helper": "^0.4.0",
@@ -16,8 +15,7 @@
     "react-dom": "^17.0.2",
     "react-infinite-viewer": "^0.13.0",
     "react-moveable": "^0.30.3",
-    "react-selecto": "^1.13.2",
-    "scenejs": "^1.5.0"
+    "react-selecto": "^1.13.2"
   },
   "devDependencies": {
     "@types/react": "^17.0.33",
