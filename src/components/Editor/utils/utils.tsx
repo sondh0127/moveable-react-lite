@@ -1,11 +1,10 @@
 import { prefixNames } from "framework-utils";
 import { PREFIX, DATA_SCENA_ELEMENT_ID } from "../consts";
-import { ScenaFunctionComponent, ScenaProps, ScenaComponent, ScenaJSXElement, ScenaFunctionJSXElement, ElementInfo } from "../types";
+import {ScenaComponent, ScenaJSXElement, ElementInfo } from "../types";
 import { IObject, splitComma, isArray, isFunction, isObject } from "@daybrush/utils";
 import { Frame } from "scenejs";
 import { getElementInfo } from "react-moveable";
 import { fromTranslation, matrix3d } from "@scena/matrix";
-import React from "react";
 
 
 export function prefix(...classNames: string[]) {
@@ -21,15 +20,8 @@ export function getContentElement(el: HTMLElement): HTMLElement | null {
     return null;
 }
 
-export function between(val: number, min: number, max: number) {
-    return Math.min(Math.max(min, val), max);
-}
-
 export function getId(el: HTMLElement | SVGElement) {
     return el.getAttribute(DATA_SCENA_ELEMENT_ID)!;
-}
-export function getIds(els: Array<HTMLElement | SVGElement>): string[] {
-    return els.map(el => getId(el));
 }
 
 export function checkInput(target: HTMLElement | SVGElement) {
@@ -52,22 +44,6 @@ export function checkImageLoaded(el: HTMLElement | SVGElement): Promise<any> {
             })
         }
     });
-}
-
-export function getParnetScenaElement(el: HTMLElement | SVGElement): HTMLElement | SVGElement | null {
-    if (!el) {
-        return null;
-    }
-    if (el.hasAttribute(DATA_SCENA_ELEMENT_ID)) {
-        return el;
-    }
-    return getParnetScenaElement(el.parentElement as HTMLElement | SVGElement);
-}
-
-export function makeScenaFunctionComponent<T = IObject<any>>(id: string, component: (props: ScenaProps & T) => React.ReactElement<any, any>): ScenaFunctionComponent<T> {
-    (component as ScenaFunctionComponent<T>).scenaComponentId = id;
-
-    return component as ScenaFunctionComponent<T>;
 }
 
 export function getScenaAttrs(el: HTMLElement | SVGElement) {
@@ -93,9 +69,6 @@ export function isScenaFunction(value: any): value is ScenaComponent {
 
 export function isScenaElement(value: any): value is ScenaJSXElement {
     return isObject(value) && !isScenaFunction(value);
-}
-export function isScenaFunctionElement(value: any): value is ScenaFunctionJSXElement {
-    return isScenaElement(value) && isFunction(value.type);
 }
 
 export function setMoveMatrix(frame: Frame, moveMatrix: number[]) {
