@@ -10,7 +10,7 @@ const MoveableMananger: React.FC<{
     zoom: number,
     moveableData: () =>MoveableData
     getSelecto: () => Selecto;
-}> = (props) => {
+}> = (props, ref) => {
     const {
         selectedTargets,
         selectedMenu,
@@ -19,13 +19,20 @@ const MoveableMananger: React.FC<{
         getSelecto
     } = props;
 
+    const moveableRef = React.useRef<Moveable>();
+
     const elementGuidelines = [document.querySelector(".scena-viewport"), ...moveableData().getTargets()].filter(el => {
         return selectedTargets.indexOf(el as any) === -1;
     });
 
     const isShift = false
 
+    React.useImperativeHandle(ref, () => ({
+        moveableRef
+    }));
+
     return <Moveable
+        ref={moveableRef}
         targets={selectedTargets}
         draggable={true}
         resizable={true}
@@ -57,4 +64,4 @@ const MoveableMananger: React.FC<{
     ></Moveable>
 }
 
-export default MoveableMananger
+export default React.forwardRef(MoveableMananger);

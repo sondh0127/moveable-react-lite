@@ -26,7 +26,8 @@ const Editor: React.FC = () => {
     const moveableData = React.useRef<MoveableData>(new MoveableData(memory));
     const infiniteViewer = React.useRef<InfiniteViewer>();
     const selecto = React.useRef<Selecto>();
-    const viewport = React.useRef<Viewport>();
+    const viewport = React.useRef<typeof Viewport>();
+    const moveableManager = React.useRef<typeof MoveableManager>();
     const [ids, setIds] = useAtom(idsAtom)
     const [jsxs, setJsxs] = useAtom(jsxsAtom)
 
@@ -243,6 +244,7 @@ const Editor: React.FC = () => {
                         height: `${600}px`,
                     }}>
                     <MoveableManager
+                        ref={moveableManager}
                         moveableData={() => moveableData.current!}
                         getSelecto={() => selecto.current!}
                         selectedTargets={selectedTargets}
@@ -298,6 +300,15 @@ const Editor: React.FC = () => {
                             setSelectedTargets([contentElement]);
                         }
                     }
+
+                    if (
+                        (inputEvent.type === "touchstart" && e.isTrusted)
+                        || moveableManager.current!.moveableRef.current.isMoveableElement(target)
+                        // || state.selectedTargets.some(t => t === target || t.contains(target))
+                    ) {
+                        e.stop();
+                    }
+
                 }}
                 onScroll={({ direction }) => {
                     infiniteViewer.current!.scrollBy(direction[0] * 10, direction[1] * 10);
