@@ -11,11 +11,63 @@ import { getElementInfo } from "react-moveable";
 import './Editor.css';
 import { useAtom } from "jotai";
 import { idsAtom, jsxsAtom } from "./store";
-import { AddedInfo, ElementInfo } from ".";
+import { ElementInfo } from ".";
 import { IObject } from "@daybrush/utils";
 
 const memory = new Memory();
 export const moveableData = new MoveableData(memory)
+
+const jsxElements = [
+    {
+        jsx: <div className="moveable" contentEditable="true" suppressContentEditableWarning={true}>Moveable</div>,
+        name: "(Moveable 1)",
+        frame: {
+            position: "absolute",
+            left: "50%",
+            top: "30%",
+            width: "250px",
+            height: "100px",
+            "font-size": "40px",
+            "transform": "translate(-125px, -100px)",
+            display: "flex",
+            "justify-content": "center",
+            "flex-direction": "column",
+            "text-align": "center",
+            "font-weight": 100,
+        },
+    },
+    {
+        jsx: <div className="moveable" contentEditable="true" suppressContentEditableWarning={true}>Moveable 2</div>,
+        name: "(Moveable 2)",
+        frame: {
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            width: "250px",
+            height: "100px",
+            "font-size": "40px",
+            "transform": "translate(-125px, -100px)",
+            display: "flex",
+            "justify-content": "center",
+            "flex-direction": "column",
+            "text-align": "center",
+            "font-weight": 100,
+        },
+    },
+    {
+        jsx: <div className="moveable" contentEditable="true" suppressContentEditableWarning={true}>Moveable is Draggable! Resizable! Scalable! Rotatable! Warpable! Pinchable</div>,
+        name: "(Moveable 3)",
+        frame: {
+            position: "absolute",
+            left: "0%",
+            top: "65%",
+            width: "100%",
+            "font-size": "14px",
+            "text-align": "center",
+            "font-weight": "normal",
+        },
+    },
+]
 
 const Editor: React.FC = () => {
     const [state, setState] = React.useState({
@@ -51,129 +103,77 @@ const Editor: React.FC = () => {
         }
     }, [])
 
-    function appendJSXs(): Promise<AddedInfo> {
-        const jsxs = [
-            {
-                jsx: <div className="moveable" contentEditable="true" suppressContentEditableWarning={true}>Moveable</div>,
-                name: "(Moveable 1)",
-                frame: {
-                    position: "absolute",
-                    left: "50%",
-                    top: "30%",
-                    width: "250px",
-                    height: "100px",
-                    "font-size": "40px",
-                    "transform": "translate(-125px, -100px)",
-                    display: "flex",
-                    "justify-content": "center",
-                    "flex-direction": "column",
-                    "text-align": "center",
-                    "font-weight": 100,
-                },
-            },
-            {
-                jsx: <div className="moveable" contentEditable="true" suppressContentEditableWarning={true}>Moveable 2</div>,
-                name: "(Moveable 2)",
-                frame: {
-                    position: "absolute",
-                    left: "50%",
-                    top: "50%",
-                    width: "250px",
-                    height: "100px",
-                    "font-size": "40px",
-                    "transform": "translate(-125px, -100px)",
-                    display: "flex",
-                    "justify-content": "center",
-                    "flex-direction": "column",
-                    "text-align": "center",
-                    "font-weight": 100,
-                },
-            },
-            {
-                jsx: <div className="moveable" contentEditable="true" suppressContentEditableWarning={true}>Moveable is Draggable! Resizable! Scalable! Rotatable! Warpable! Pinchable</div>,
-                name: "(Moveable 3)",
-                frame: {
-                    position: "absolute",
-                    left: "0%",
-                    top: "65%",
-                    width: "100%",
-                    "font-size": "14px",
-                    "text-align": "center",
-                    "font-weight": "normal",
-                },
-            },
-        ]
-        const jsxInfos = registerChildren(jsxs);
-
-        jsxInfos.forEach((info, i) => {
-            const scopeInfo = ids[info.scopeId!];
-            const children = scopeInfo.children!;
-            info.index = children.length;
-            children.push(info);
-        });
-
-        return new Promise(resolve => {
-            resolve({
-                added: jsxInfos,
-            });
-        });
-    }
-
-    function registerChildren(_jsxs: ElementInfo[]) {
-        function makeId(_ids?: IObject<any>) {
-            _ids = _ids || ids
-            while (true) {
-                const id = `scena${Math.floor(Math.random() * 100000000)}`;
-                if (_ids[id]) {
-                    continue;
+    async function initTargets() {
+        function registerChildren(_jsxs: ElementInfo[]) {
+            function makeId(_ids?: IObject<any>) {
+                _ids = _ids || ids
+                while (true) {
+                    const id = `scena${Math.floor(Math.random() * 100000000)}`;
+                    if (_ids[id]) {
+                        continue;
+                    }
+                    return id;
                 }
-                return id;
             }
+
+            return _jsxs.map(info => {
+                const id = info.id || makeId();
+                const jsx = info.jsx;
+                const children = info.children || [];
+                const scopeId = info.scopeId || "viewport";
+                let componentId = "";
+                let jsxId = "";
+
+
+                if (isScenaElement(jsx)) {
+                    jsxId = makeId(jsxs);
+                    setJsxs({
+                        ...jsxs,
+                        [jsxId]: jsx,
+                    })
+                }
+                const elementInfo: ElementInfo = {
+                    ...info,
+                    jsx,
+                    children: registerChildren(children),
+                    scopeId,
+                    componentId,
+                    jsxId,
+                    frame: info.frame || {},
+                    el: null,
+                    id,
+                };
+
+                function setInfo(id: string, info: ElementInfo) {
+                    const _ids = ids;
+                    _ids[id] = info;
+                    setIds(_ids);
+                }
+
+                setInfo(id, elementInfo);
+                return elementInfo;
+            });
         }
 
-        return _jsxs.map(info => {
-            const id = info.id || makeId();
-            const jsx = info.jsx;
-            const children = info.children || [];
-            const scopeId = info.scopeId || "viewport";
-            let componentId = "";
-            let jsxId = "";
+        function appendJSXs(): Promise<ElementInfo[]> {
 
+            const jsxInfos = registerChildren(jsxElements);
 
-            if (isScenaElement(jsx)) {
-                jsxId = makeId(jsxs);
-                setJsxs({
-                    ...jsxs,
-                    [jsxId]: jsx,
-                })
-            }
-            const elementInfo: ElementInfo = {
-                ...info,
-                jsx,
-                children: registerChildren(children),
-                scopeId,
-                componentId,
-                jsxId,
-                frame: info.frame || {},
-                el: null,
-                id,
-            };
+            jsxInfos.forEach((info, i) => {
+                const scopeInfo = ids[info.scopeId!];
+                const children = scopeInfo.children!;
+                info.index = children.length;
+                children.push(info);
+            });
 
-            function setInfo(id: string, info: ElementInfo) {
-                const _ids = ids;
-                _ids[id] = info;
-                setIds(_ids);
-            }
+            return new Promise(resolve => {
+                resolve(jsxInfos);
+            });
+        }
 
-            setInfo(id, elementInfo);
-            return elementInfo;
-        });
-    }
-
-    async function initTargets() {
-        const { added } = await appendJSXs()
+        const jsxInfos = await appendJSXs()
         const data = moveableData!;
-        const infos = updateElements(added)
+        const infos = updateElements(jsxInfos)
         const targets = infos.map(function registerFrame(info) {
             const frame = data.createFrame(info.el!, info.frame);
 
@@ -188,7 +188,6 @@ const Editor: React.FC = () => {
 
         await Promise.all(targets.map(target => checkImageLoaded(target)))
 
-        setSelectedTargets(targets);
         setSelectedTargets([targets[0]]);
     }
 
@@ -211,8 +210,6 @@ const Editor: React.FC = () => {
         return targets;
     }
 
-
-
     return (
         <div className={prefix("editor")} >
             <InfiniteViewer ref={infiniteViewer}
@@ -234,7 +231,6 @@ const Editor: React.FC = () => {
                         selectedTargets={selectedTargets}
                         selectedMenu={selectedMenu}
                         zoom={zoom}
-                        setSelectedTargets={setSelectedTargets}
                     ></MoveableManager>
                 </Viewport>
             </InfiniteViewer>
