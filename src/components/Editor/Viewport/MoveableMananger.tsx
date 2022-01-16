@@ -1,27 +1,25 @@
 import React from "react";
 import Moveable from "react-moveable";
 import { getContentElement } from "../utils/utils";
-import MoveableData from "../utils/MoveableData";
 import Selecto from "react-selecto";
+import { moveableData } from '../Editor'
 
 const MoveableMananger: React.FC<{
     selectedTargets: Array<HTMLElement | SVGElement>;
     selectedMenu: string,
     zoom: number,
-    moveableData: () =>MoveableData
     getSelecto: () => Selecto;
 }> = (props, ref) => {
     const {
         selectedTargets,
         selectedMenu,
         zoom,
-        moveableData,
         getSelecto
     } = props;
 
     const moveableRef = React.useRef<Moveable>();
 
-    const elementGuidelines = [document.querySelector(".scena-viewport"), ...moveableData().getTargets()].filter(el => {
+    const elementGuidelines = [document.querySelector(".scena-viewport"), ...moveableData.getTargets()].filter(el => {
         return selectedTargets.indexOf(el as any) === -1;
     });
 
@@ -46,10 +44,10 @@ const MoveableMananger: React.FC<{
         elementSnapDirections={{ top: true, left: true, right: true, center: true, middle: true, bottom: true }}
         isDisplayInnerSnapDigit={true}
         elementGuidelines={elementGuidelines as any}
-        onDragStart={moveableData().onDragStart}
-        onDrag={moveableData().onDrag}
-        onResizeStart={moveableData().onResizeStart}
-        onResize={moveableData().onResize}
+        onDragStart={moveableData.onDragStart}
+        onDrag={moveableData.onDrag}
+        onResizeStart={moveableData.onResizeStart}
+        onResize={moveableData.onResize}
         onClick={e => {
             const target = e.inputTarget as any;
             if (e.isDouble && target.isContentEditable) {

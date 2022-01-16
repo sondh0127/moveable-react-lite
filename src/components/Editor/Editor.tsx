@@ -15,6 +15,9 @@ import { idsAtom, jsxsAtom } from "./store";
 import { AddedInfo, ElementInfo } from ".";
 import { IObject } from "@daybrush/utils";
 
+const memory = new Memory();
+export const moveableData = new MoveableData(memory)
+
 const Editor: React.FC = () => {
     const [state, setState] = React.useState({
         selectedTargets: [],
@@ -22,8 +25,6 @@ const Editor: React.FC = () => {
         selectedMenu: "MoveTool",
     })
 
-    const memory = new Memory();
-    const moveableData = React.useRef<MoveableData>(new MoveableData(memory));
     const infiniteViewer = React.useRef<InfiniteViewer>();
     const selecto = React.useRef<Selecto>();
     const viewport = React.useRef<typeof Viewport>();
@@ -48,7 +49,7 @@ const Editor: React.FC = () => {
         initTargets()
         return () => {
             memory.clear();
-            moveableData.current!.clear();
+            moveableData!.clear();
         }
     }, [])
 
@@ -173,7 +174,7 @@ const Editor: React.FC = () => {
 
     async function initTargets() {
         const { added } = await appendJSXs()
-        const data = moveableData.current!;
+        const data = moveableData!;
         const container = viewport.current!.viewportRef.current!;
         const infos = updateElements(added)
         const targets = infos.map(function registerFrame(info) {
@@ -222,7 +223,7 @@ const Editor: React.FC = () => {
             resolve()
         })
         selecto.current!.setSelectedTargets(targets);
-        moveableData.current!.setSelectedTargets(targets);
+        moveableData!.setSelectedTargets(targets);
         return targets;
     }
 
@@ -245,7 +246,6 @@ const Editor: React.FC = () => {
                     }}>
                     <MoveableManager
                         ref={moveableManager}
-                        moveableData={() => moveableData.current!}
                         getSelecto={() => selecto.current!}
                         selectedTargets={selectedTargets}
                         selectedMenu={selectedMenu}
