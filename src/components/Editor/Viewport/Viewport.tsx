@@ -8,7 +8,7 @@ import { idsAtom } from "../store";
 
 const Viewport: React.FC<{
     style: IObject<any>,
-}> = (props, ref) => {
+}> = (props) => {
     const [ids, setIds] = useAtom(idsAtom)
 
     const viewportRef = React.useRef<HTMLDivElement>();
@@ -58,10 +58,6 @@ const Viewport: React.FC<{
         });
     }
 
-    React.useImperativeHandle(ref, () => ({
-        viewportRef
-    }));
-
     return <div className={prefix("viewport-container")} style={props.style}>
         {props.children}
         <div className={prefix("viewport")} {...{ [DATA_SCENA_ELEMENT_ID]: "viewport" }} ref={viewportRef}>
@@ -70,4 +66,4 @@ const Viewport: React.FC<{
     </div>
 }
 
-export default React.forwardRef(Viewport);
+export default Viewport

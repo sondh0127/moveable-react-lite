@@ -2,12 +2,11 @@ import * as React from "react";
 import InfiniteViewer from "react-infinite-viewer";
 import Selecto from "react-selecto";
 import Viewport from "./Viewport/Viewport";
-import { getContentElement, prefix, checkImageLoaded, setMoveMatrix, getOffsetOriginMatrix, updateElements, getId, isScenaElement } from "./utils/utils";
+import { getContentElement, prefix, checkImageLoaded, updateElements, isScenaElement } from "./utils/utils";
 import Memory from "./utils/Memory";
 import MoveableManager from "./Viewport/MoveableMananger";
 import MoveableData from "./utils/MoveableData";
 import { DATA_SCENA_ELEMENT_ID } from "./consts";
-import { invert, matrix3d, } from "@scena/matrix";
 import { getElementInfo } from "react-moveable";
 import './Editor.css';
 import { useAtom } from "jotai";
@@ -27,7 +26,6 @@ const Editor: React.FC = () => {
 
     const infiniteViewer = React.useRef<InfiniteViewer>();
     const selecto = React.useRef<Selecto>();
-    const viewport = React.useRef<typeof Viewport>();
     const moveableManager = React.useRef<typeof MoveableManager>();
     const [ids, setIds] = useAtom(idsAtom)
     const [jsxs, setJsxs] = useAtom(jsxsAtom)
@@ -57,7 +55,7 @@ const Editor: React.FC = () => {
         const jsxs = [
             {
                 jsx: <div className="moveable" contentEditable="true" suppressContentEditableWarning={true}>Moveable</div>,
-                name: "(Logo)",
+                name: "(Moveable 1)",
                 frame: {
                     position: "absolute",
                     left: "50%",
@@ -75,7 +73,7 @@ const Editor: React.FC = () => {
             },
             {
                 jsx: <div className="moveable" contentEditable="true" suppressContentEditableWarning={true}>Moveable 2</div>,
-                name: "(Badges)",
+                name: "(Moveable 2)",
                 frame: {
                     position: "absolute",
                     left: "50%",
@@ -93,7 +91,7 @@ const Editor: React.FC = () => {
             },
             {
                 jsx: <div className="moveable" contentEditable="true" suppressContentEditableWarning={true}>Moveable is Draggable! Resizable! Scalable! Rotatable! Warpable! Pinchable</div>,
-                name: "(Description)",
+                name: "(Moveable 3)",
                 frame: {
                     position: "absolute",
                     left: "0%",
@@ -175,7 +173,6 @@ const Editor: React.FC = () => {
     async function initTargets() {
         const { added } = await appendJSXs()
         const data = moveableData!;
-        const container = viewport.current!.viewportRef.current!;
         const infos = updateElements(added)
         const targets = infos.map(function registerFrame(info) {
             const frame = data.createFrame(info.el!, info.frame);
@@ -188,20 +185,7 @@ const Editor: React.FC = () => {
             info.children!.forEach(registerFrame);
             return info.el!;
         }).filter(el => el);
-        infos.forEach(info => {
-            if (!info.moveMatrix) {
-                return;
-            }
-            const frame = data.getFrame(info.el!);
-            let nextMatrix = getOffsetOriginMatrix(info.el!, container);
 
-            nextMatrix = invert(nextMatrix, 4);
-
-            const moveMatrix = matrix3d(nextMatrix, info.moveMatrix);
-
-            setMoveMatrix(frame, moveMatrix);
-            data.render(info.el!);
-        });
         await Promise.all(targets.map(target => checkImageLoaded(target)))
 
         setSelectedTargets(targets);
@@ -239,7 +223,7 @@ const Editor: React.FC = () => {
                 maxPinchWheel={3}
                 zoom={zoom}
             >
-                <Viewport ref={viewport}
+                <Viewport
                     style={{
                         width: `${500}px`,
                         height: `${600}px`,
