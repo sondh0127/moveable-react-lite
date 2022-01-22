@@ -250,6 +250,7 @@ const Editor: React.FC = () => {
                     } : undefined
                 }
                 onDragStart={e => {
+
                     const inputEvent = e.inputEvent;
                     const target = inputEvent.target;
 
@@ -293,6 +294,7 @@ const Editor: React.FC = () => {
                         if (!isDragStart) {
                             return;
                         }
+                        moveableManager.current!.moveableRef.current.moveable.dragStart(inputEvent);
                     });
                 }}
             ></Selecto>
