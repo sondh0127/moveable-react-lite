@@ -76,6 +76,7 @@ const Editor: React.FC = () => {
 
     const infiniteViewer = React.useRef<InfiniteViewer>();
     const selecto = React.useRef<Selecto>();
+    const viewportRef = React.useRef<typeof Viewport>();
     const moveableManager = React.useRef<typeof MoveableManager>();
     const [ids, setIds] = useAtom(idsAtom)
     const [jsxs, setJsxs] = useAtom(jsxsAtom)
@@ -201,6 +202,16 @@ const Editor: React.FC = () => {
         return targets;
     }
 
+
+    function onRemoveElements() {
+        const viewport = viewportRef.current
+        return viewport.removeTargets(selectedTargets).then(({ removed }) => {
+
+            setSelectedTargets([]);
+            return selectedTargets;
+        });
+    }
+
     return (
         <div className={prefix("editor")} >
             <InfiniteViewer ref={infiniteViewer}
@@ -212,12 +223,14 @@ const Editor: React.FC = () => {
                 zoom={zoom}
             >
                 <Viewport
+                    ref={viewportRef}
                     style={{
                         width: `${500}px`,
                         height: `${600}px`,
                     }}>
                     <MoveableManager
                         ref={moveableManager}
+                        onRemoveElements={onRemoveElements}
                         getSelecto={() => selecto.current!}
                         selectedTargets={selectedTargets}
                         selectedMenu={selectedMenu}

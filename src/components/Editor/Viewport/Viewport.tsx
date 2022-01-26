@@ -1,6 +1,6 @@
 import * as React from "react";
 import { IObject, isString, isArray } from "@daybrush/utils";
-import { prefix } from "../utils/utils";
+import { getId, getScenaAttrs, prefix } from "../utils/utils";
 import { DATA_SCENA_ELEMENT_ID } from "../consts";
 import { ScenaJSXElement, ElementInfo } from "../types";
 import { useAtom } from "jotai";
@@ -8,7 +8,7 @@ import { idsAtom } from "../store";
 
 const Viewport: React.FC<{
     style: IObject<any>,
-}> = (props) => {
+}> = (props, ref) => {
     const [ids, setIds] = useAtom(idsAtom)
 
     const viewportRef = React.useRef<HTMLDivElement>();
@@ -51,6 +51,63 @@ const Viewport: React.FC<{
         });
     }
 
+    function getInfo(id: string) {
+        return ids[id];
+    }
+
+    function unregisterChildren(children: ElementInfo[], isChild: boolean): ElementInfo[] {
+
+        return children.slice(0).map(info => {
+            const target = info.el!;
+            let innerText = "";
+            let innerHTML = "";
+
+            if (info.attrs!.contenteditable) {
+                innerText = (target as HTMLElement).innerText;
+            } else {
+                innerHTML = target.innerHTML;
+            }
+
+            if (!isChild) {
+                const parentInfo = getInfo(info.scopeId!);
+                const parentChildren = parentInfo.children!;
+                const index = parentChildren.indexOf(info);
+                parentInfo.children!.splice(index, 1);
+            }
+            const nextChildren = unregisterChildren(info.children!, true);
+
+            const newIds = {...ids};
+            delete newIds[info.id!];
+            setIds(newIds)
+            delete info.el;
+
+            return {
+                ...info,
+                innerText,
+                innerHTML,
+                attrs: getScenaAttrs(target),
+                children: nextChildren,
+            };
+        });
+    }
+
+    function removeTargets(targets: Array<HTMLElement | SVGElement>) {
+        const removedChildren = targets.map(target => {
+            return ids[getId(target)];
+        }).filter(info => info) as ElementInfo[];
+
+        const removed = unregisterChildren(removedChildren, false);
+        return new Promise(resolve => {
+            resolve({
+                removed,
+            });
+        });
+    }
+
+    React.useImperativeHandle(ref, () => ({
+        removeTargets
+      }));
+
     return <div className={prefix("viewport-container")} style={props.style}>
         {props.children}
         <div className={prefix("viewport")} {...{ [DATA_SCENA_ELEMENT_ID]: "viewport" }} ref={viewportRef}>
@@ -59,4 +116,4 @@ const Viewport: React.FC<{
     </div>
 }
 
-export default Viewport
+export default React.forwardRef(Viewport)

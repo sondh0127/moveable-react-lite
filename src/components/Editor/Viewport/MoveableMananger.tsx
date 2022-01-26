@@ -3,18 +3,23 @@ import Moveable from "react-moveable";
 import { getContentElement } from "../utils/utils";
 import Selecto from "react-selecto";
 import { moveableData } from '../Editor'
+import { DimensionViewableProps, DimensionViewable } from "./ables/DimensionViewable";
+import { DeleteButtonViewable } from "./ables/DeleteButtonViewable";
+import { ElementInfo } from "..";
 
 const MoveableMananger: React.FC<{
     selectedTargets: Array<HTMLElement | SVGElement>;
     selectedMenu: string,
     zoom: number,
     getSelecto: () => Selecto;
+    viewportRef;
 }> = (props, ref) => {
     const {
         selectedTargets,
         selectedMenu,
         zoom,
-        getSelecto
+        getSelecto,
+        onRemoveElements,
     } = props;
 
     const moveableRef = React.useRef<Moveable>();
@@ -29,9 +34,15 @@ const MoveableMananger: React.FC<{
         moveableRef
     }));
 
-    return <Moveable
+
+
+    return <Moveable<DimensionViewableProps>
         ref={moveableRef}
         targets={selectedTargets}
+        ables={[DimensionViewable, DeleteButtonViewable]}
+        dimensionViewable={true}
+        deleteButtonViewable={true}
+        onRemoveElements={onRemoveElements}
         draggable={true}
         resizable={true}
         zoom={1 / zoom}

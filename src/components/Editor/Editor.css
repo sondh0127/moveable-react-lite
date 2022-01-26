@@ -49,3 +49,16 @@
     height: 100%;
     pointer-events: none;
 }
+
+.moveable-dimension {
+    position: absolute;
+    background: var(--mainColor);
+    border-radius: 2px;
+    padding: 1px 3px;
+    color: white;
+    font-size: 13px;
+    white-space: nowrap;
+    font-weight: bold;
+    will-change: transform;
+    transform: translate(-50%) translateZ(0px);
+}
